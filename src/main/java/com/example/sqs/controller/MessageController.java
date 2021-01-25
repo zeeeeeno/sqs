@@ -3,6 +3,7 @@ package com.example.sqs.controller;
 import lombok.extern.java.Log;
 import com.example.sqs.dto.MessageDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import com.example.sqs.service.MessageServiceImpl;
@@ -24,7 +25,7 @@ public class MessageController {
     private final MessageServiceImpl messageService;
 
     /**
-     * 서버 연결 확인
+     * 서버 연결 확인(테스트용)
      * @return 서버 작동 유무
      */
     @GetMapping("connection")
@@ -40,7 +41,7 @@ public class MessageController {
      * @return 매개변수 전송 결과
      */
     @PostMapping("message/text")
-    public ResponseEntity<String> sendMessage1(@RequestBody String message) {
+    public ResponseEntity<String> sendMessageText(@RequestBody String message) {
         log.info("MessageController sendMessage1() msg: " + message);
         log.info("msg: " + message.getClass().getName());
 
@@ -55,7 +56,7 @@ public class MessageController {
      * @return 매개변수 전송 결과
      */
     @PostMapping("message/object")
-    public ResponseEntity<String> sendMessage2(@RequestBody MessageDto message) {
+    public ResponseEntity<String> sendMessageObject(@RequestBody MessageDto message) {
         log.info("MessageController sendMessage2() message: " + message);
         log.info("message: " + message.getClass().getName());
 
@@ -69,7 +70,7 @@ public class MessageController {
      * @return 데이터 수신 여부
      */
     @GetMapping("message/text")
-    public ResponseEntity<String> receiveMessage1() {
+    public ResponseEntity<String> receiveTextMessage() {
         log.info("MessageController - receiveMessage1()");
 
         messageService.receiveTextMessage();
@@ -82,7 +83,7 @@ public class MessageController {
      * @return 데이터 수신 여부
      */
     @GetMapping("message/object")
-    public ResponseEntity<String> receiveMessage2() throws NullPointerException {
+    public ResponseEntity<String> receiveObjectMessage() throws NullPointerException {
         log.info("MessageController - receiveMessage2()");
 
         messageService.receiveObjectMessage();
