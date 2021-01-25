@@ -1,12 +1,11 @@
 package com.example.sqs.controller;
 
-import com.example.sqs.dto.MessageDTO;
-import com.example.sqs.service.AmazonSQSApiCaller;
-import com.example.sqs.service.MessageService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
+import com.example.sqs.dto.MessageDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import com.example.sqs.service.MessageServiceImpl;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,80 +22,72 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MessageController {
 
-    private final MessageService messageService;
-    private final AmazonSQSApiCaller amazonSQSApiCaller;
+    private final MessageServiceImpl messageService;
 
     /**
      * 서버 연결 확인
-     * @return
+     * @return 서버 작동 유무
      */
-    @GetMapping("conn")
-    public ResponseEntity isConn() {
+    @GetMapping("connection")
+    public ResponseEntity<Object> isConn() {
         log.info("MessageController - isConn()");
 
-        return new ResponseEntity("OK", HttpStatus.OK);
+        return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
     /**
-     * 메시지 송신 예제 1
-     * @param msg: text
-     * @return
+     * 메시지 송신
+     * @param message: text
+     * @return 매개변수 전송 결과
      */
-    @PostMapping("msg1")
-    public ResponseEntity sendMessage1(@RequestBody String msg) {
-        log.info("MessageController sendMessage1() msg: " + msg);
-        log.info("msg: " + msg.getClass().getName());
+    @PostMapping("message/first")
+    public ResponseEntity<String> sendMessage1(@RequestBody String message) {
+        log.info("MessageController sendMessage1() msg: " + message);
+        log.info("msg: " + message.getClass().getName());
 
-        messageService.sendMessage1(msg);
+        messageService.sendMessage(message);
 
-        return new ResponseEntity("OK", HttpStatus.OK);
+        return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
     /**
-     * 메시지 송신 예제2
+     * 메시지 송신
      * @param message: object
-     * @return
+     * @return 매개변수 전송 결과
      */
-    @PostMapping("msg2")
-    public ResponseEntity sendMessage2(@RequestBody MessageDTO message) {
+    @PostMapping("message/second")
+    public ResponseEntity<String> sendMessage2(@RequestBody MessageDto message) {
         log.info("MessageController sendMessage2() message: " + message);
         log.info("message: " + message.getClass().getName());
 
-        messageService.sendMessage2(message);
+        messageService.sendMessage(message);
 
-        return new ResponseEntity("OK", HttpStatus.OK);
+        return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
     /**
-     * 메시지 수신 예제 1
-     * @return
+     * 메시지 수신
+     * @return 데이터 수신 여부
      */
-    @GetMapping("msg1")
-    public ResponseEntity receiveMessage1() {
+    @GetMapping("message/first")
+    public ResponseEntity<String> receiveMessage1() {
         log.info("MessageController - receiveMessage1()");
 
-        messageService.receiveMessage1();
+        messageService.receiveTextMessage();
 
-        return new ResponseEntity("OK", HttpStatus.OK);
+        return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
     /**
-     * 메시지 수신 예제 2
-     * @return
+     * 메시지 수신
+     * @return 데이터 수신 여부
      */
-    @GetMapping("msg2")
-    public ResponseEntity receiveMessage2() {
+    @GetMapping("message/second")
+    public ResponseEntity<String> receiveMessage2() throws NullPointerException {
         log.info("MessageController - receiveMessage2()");
 
-        messageService.receiveMessage2();
+        messageService.receiveObjectMessage();
 
-        return new ResponseEntity("OK", HttpStatus.OK);
+        return new ResponseEntity<>("OK", HttpStatus.OK);
     }
-
-//    @PostMapping("send")
-//    public String send(@RequestBody String message) {
-//        log.info("message: " + message);
-//        log.info(amazonSQSApiCaller.sendMessage(message).toString()); // 테스트를 위한 콘솔 출력
-//        return "OK";
-//    }
 }

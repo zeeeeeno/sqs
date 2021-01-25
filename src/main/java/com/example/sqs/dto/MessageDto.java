@@ -10,7 +10,7 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageDTO {
+public class MessageDto {
     private String sender;
     private String contents;
     private String date;
