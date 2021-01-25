@@ -1,6 +1,6 @@
 package com.example.sqs.controller;
 
-import com.example.sqs.dto.Message;
+import com.example.sqs.dto.MessageDTO;
 import com.example.sqs.service.AmazonSQSApiCaller;
 import com.example.sqs.service.MessageService;
 import lombok.RequiredArgsConstructor;
@@ -24,39 +24,71 @@ import org.springframework.web.bind.annotation.RestController;
 public class MessageController {
 
     private final MessageService messageService;
-
     private final AmazonSQSApiCaller amazonSQSApiCaller;
 
+    /**
+     * 서버 연결 확인
+     * @return
+     */
     @GetMapping("conn")
     public ResponseEntity isConn() {
-        log.info("connect succes!");
+        log.info("MessageController - isConn()");
 
         return new ResponseEntity("OK", HttpStatus.OK);
     }
 
-    @PostMapping("post")
-    public ResponseEntity sendMsg(@RequestBody String msg) {
-        log.info("send method");
+    /**
+     * 메시지 송신 예제 1
+     * @param msg: text
+     * @return
+     */
+    @PostMapping("msg1")
+    public ResponseEntity sendMessage1(@RequestBody String msg) {
+        log.info("MessageController sendMessage1() msg: " + msg);
+        log.info("msg: " + msg.getClass().getName());
 
-        messageService.sendMessage(msg);
-
-        return new ResponseEntity("OK", HttpStatus.OK);
-    }
-
-    @GetMapping("get")
-    public ResponseEntity getMsg() {
-        log.info("getMsg method");
-
-        messageService.getMsg();
+        messageService.sendMessage1(msg);
 
         return new ResponseEntity("OK", HttpStatus.OK);
     }
 
-    @PostMapping("send")
-    public ResponseEntity postMsg(@RequestBody Message message) {
-        log.info("postMsg method");
+    /**
+     * 메시지 송신 예제2
+     * @param message: object
+     * @return
+     */
+    @PostMapping("msg2")
+    public ResponseEntity sendMessage2(@RequestBody MessageDTO message) {
+        log.info("MessageController sendMessage2() message: " + message);
+        log.info("message: " + message.getClass().getName());
 
-        messageService.postMsg(message);
+        messageService.sendMessage2(message);
+
+        return new ResponseEntity("OK", HttpStatus.OK);
+    }
+
+    /**
+     * 메시지 수신 예제 1
+     * @return
+     */
+    @GetMapping("msg1")
+    public ResponseEntity receiveMessage1() {
+        log.info("MessageController - receiveMessage1()");
+
+        messageService.receiveMessage1();
+
+        return new ResponseEntity("OK", HttpStatus.OK);
+    }
+
+    /**
+     * 메시지 수신 예제 2
+     * @return
+     */
+    @GetMapping("msg2")
+    public ResponseEntity receiveMessage2() {
+        log.info("MessageController - receiveMessage2()");
+
+        messageService.receiveMessage2();
 
         return new ResponseEntity("OK", HttpStatus.OK);
     }
