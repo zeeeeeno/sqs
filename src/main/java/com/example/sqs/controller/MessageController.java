@@ -2,27 +2,31 @@ package com.example.sqs.controller;
 
 import lombok.extern.java.Log;
 import com.example.sqs.dto.MessageDto;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import com.example.sqs.service.MessageService;
 import org.springframework.http.ResponseEntity;
-import com.example.sqs.service.MessageServiceImpl;
+import org.springframework.messaging.Message;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 
 /**
  * SQS 컨트롤러
- * - RequiredArgsConstructor: 초기화 되지않은 final 필드나, @NonNull 이 붙은 필드에 대해 생성자를 생성, 주로 의존성 주입 편의성을 위해서 사용되곤 합니다.
+ * - @RequiredArgsConstructor: 초기화 되지않은 final 필드나, @NonNull 이 붙은 필드에 대해 생성자를 생성, 주로 의존성 주입 편의성을 위해서 사용되곤 합니다.
  */
 @Log
 @RestController
-@RequiredArgsConstructor
 public class MessageController {
 
-    private final MessageServiceImpl messageService;
+    private final MessageService messageService;
+
+    @Autowired
+    public MessageController(MessageService messageService) {
+        this.messageService = messageService;
+    }
 
     /**
      * 서버 연결 확인(테스트용)
@@ -70,12 +74,12 @@ public class MessageController {
      * @return 데이터 수신 여부
      */
     @GetMapping("message/text")
-    public ResponseEntity<String> receiveTextMessage() {
+    public ResponseEntity<Message<String>> receiveTextMessage() {
         log.info("MessageController - receiveMessage1()");
 
-        messageService.receiveTextMessage();
+        Message<String> message = messageService.receiveTextMessage();
 
-        return new ResponseEntity<>("OK", HttpStatus.OK);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
     /**
@@ -83,11 +87,11 @@ public class MessageController {
      * @return 데이터 수신 여부
      */
     @GetMapping("message/object")
-    public ResponseEntity<String> receiveObjectMessage() throws NullPointerException {
+    public ResponseEntity<MessageDto> receiveObjectMessage() throws NullPointerException {
         log.info("MessageController - receiveMessage2()");
 
-        messageService.receiveObjectMessage();
+        MessageDto messageDto = messageService.receiveObjectMessage();
 
-        return new ResponseEntity<>("OK", HttpStatus.OK);
+        return new ResponseEntity<>(messageDto, HttpStatus.OK);
     }
 }

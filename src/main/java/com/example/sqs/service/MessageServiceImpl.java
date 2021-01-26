@@ -1,6 +1,5 @@
 package com.example.sqs.service;
 
-import java.util.Objects;
 import lombok.extern.java.Log;
 import com.example.sqs.dto.MessageDto;
 import com.amazonaws.services.sqs.AmazonSQS;
@@ -16,54 +15,52 @@ import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 @SuppressWarnings("rawtypes")
 public class MessageServiceImpl implements MessageService {
 
-    /**
-     * Message Convertor
-     */
-    private final QueueMessagingTemplate queueMessagingTemplate;
-
     @Autowired
     public MessageServiceImpl(AmazonSQS amazonSQS) {
         this.queueMessagingTemplate = new QueueMessagingTemplate((AmazonSQSAsync) amazonSQS);
     }
 
     /**
-     * 메시지 송신 예제1
+     * Message Convertor
+     */
+    private final QueueMessagingTemplate queueMessagingTemplate;
+
+
+    /**
+     * 문자열 타입의 메시지 송신 예제
      * @param message: text
      */
     public void sendMessage(String message) {
-        log.info("MessageService - sendMessage1() message: " + message);
+        log.info("MessageService - sendMessage() message: " + message);
 
         Message<String> newMessage = MessageBuilder.withPayload(message).build();
         queueMessagingTemplate.send("paul-standard-queue", newMessage);
     }
 
     /**
-     * 메시지 수신 예제1
+     * 문자열 타입의 메시지 수신 예제
      */
-    public void receiveTextMessage() {
-        log.info("MessageService - receiveMessage1()");
+    public Message<String> receiveTextMessage() {
+        log.info("MessageService - receiveTextMessage()");
 
-        Message message = queueMessagingTemplate.receive("paul-standard-queue");
-        log.info("message: " + message);
+        return (Message<String>) queueMessagingTemplate.receive("paul-standard-queue");
     }
 
     /**
-     * 메시지 송신 예제2
+     * 객체 타입의 메시지 송신 예제
      * @param message: object
      */
     public void sendMessage(MessageDto message) {
-        log.info("MessageService - sendMessage2() message: " + message);
-        log.info("message: " + message.getClass().getName());
+        log.info("MessageService - sendMessage() message: " + message);
 
         queueMessagingTemplate.convertAndSend("paul-standard-queue", message);
     }
 
     /**
-     * 메시지 수신 예제2
+     * 객체 타입의 메시지 수신 예제
      */
-    public void receiveObjectMessage() throws NullPointerException{
-        log.info("MessageService - receiveMessage1()");
-        MessageDto message = queueMessagingTemplate.receiveAndConvert("paul-standard-queue", MessageDto.class);
-        log.info("message sender: " + Objects.requireNonNull(message).getSender());
+    public MessageDto receiveObjectMessage() throws NullPointerException{
+        log.info("MessageService - receiveObjectMessage()");
+        return queueMessagingTemplate.receiveAndConvert("paul-standard-queue", MessageDto.class);
     }
 }

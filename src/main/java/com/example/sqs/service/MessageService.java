@@ -1,17 +1,18 @@
 package com.example.sqs.service;
 
 import com.example.sqs.dto.MessageDto;
+import org.springframework.messaging.Message;
 
 public interface MessageService {
     /**
      * SQS 내에 있는 문자열 타입 메시지 받기
      */
-    void receiveTextMessage();
+    Message<String> receiveTextMessage();
 
     /**
      * SQS 내에 있는 객체 타입 메시지 받기
      */
-    void receiveObjectMessage();
+    MessageDto receiveObjectMessage();
 
     /**
      * SQS 에 문자열 타입 메시지 보내
