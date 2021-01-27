@@ -36,7 +36,7 @@ public class MessageController {
     public ResponseEntity<Object> isConn() {
         log.info("MessageController - isConn()");
 
-        return new ResponseEntity<>("OK", HttpStatus.OK);
+        return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
     /**
@@ -47,9 +47,13 @@ public class MessageController {
     @PostMapping("message/text")
     public ResponseEntity<String> sendMessageText(@RequestBody String message) {
         log.info("MessageController sendMessage1() msg: " + message);
-        log.info("msg: " + message.getClass().getName());
 
-        messageService.sendMessage(message);
+        try {
+            messageService.sendMessage(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("FAIL", HttpStatus.NOT_ACCEPTABLE);
+        }
 
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
@@ -62,9 +66,13 @@ public class MessageController {
     @PostMapping("message/object")
     public ResponseEntity<String> sendMessageObject(@RequestBody MessageDto message) {
         log.info("MessageController sendMessage2() message: " + message);
-        log.info("message: " + message.getClass().getName());
 
-        messageService.sendMessage(message);
+        try {
+            messageService.sendMessage(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("FAIL", HttpStatus.NOT_ACCEPTABLE);
+        }
 
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
@@ -76,8 +84,14 @@ public class MessageController {
     @GetMapping("message/text")
     public ResponseEntity<Message<String>> receiveTextMessage() {
         log.info("MessageController - receiveMessage1()");
+        Message<String> message;
 
-        Message<String> message = messageService.receiveTextMessage();
+        try {
+            message = messageService.receiveTextMessage();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
 
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
@@ -89,8 +103,14 @@ public class MessageController {
     @GetMapping("message/object")
     public ResponseEntity<MessageDto> receiveObjectMessage() throws NullPointerException {
         log.info("MessageController - receiveMessage2()");
+        MessageDto messageDto;
 
-        MessageDto messageDto = messageService.receiveObjectMessage();
+        try {
+            messageDto = messageService.receiveObjectMessage();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
 
         return new ResponseEntity<>(messageDto, HttpStatus.OK);
     }
